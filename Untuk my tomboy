@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ada surat buat kamu 💌</title>
+<style>
+:root{color-scheme:dark;--bg1:#2a0a1c;--bg2:#6b1b43;--rose:#ff4d79;--paper:#fff7f0;--ink:#4a1630;--env:#f4b6c2;--env2:#e48fa3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:radial-gradient(circle at 50% 30%,var(--bg2),var(--bg1) 70%);color:#fff;font-family:Georgia,'Times New Roman',serif;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.hearts i{position:absolute;bottom:-40px;font-style:normal;opacity:.5;animation:up linear infinite}
+@keyframes up{to{transform:translateY(-110vh) rotate(30deg);opacity:0}}
+.scene{position:relative;width:100%;max-width:420px;padding:20px;text-align:center}
+/* envelope */
+#intro{transition:opacity .6s,transform .8s}
+#intro.gone{opacity:0;transform:scale(1.6);pointer-events:none}
+.hint{margin-bottom:28px;font-size:18px;opacity:.9}
+.env{position:relative;width:280px;height:190px;margin:0 auto;perspective:900px}
+.env .back{position:absolute;inset:0;background:var(--env2);border-radius:8px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.env .paper{position:absolute;left:14px;right:14px;top:10px;height:150px;background:var(--paper);border-radius:6px;transition:transform .9s .7s ease;z-index:2}
+.env .front{position:absolute;inset:0;z-index:3;border-radius:8px;background:
+ linear-gradient(to top right,transparent 49.5%,var(--env) 50%) left/50% 100% no-repeat,
+ linear-gradient(to top left,transparent 49.5%,var(--env) 50%) right/50% 100% no-repeat;
+ clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);background-color:var(--env)}
+.env .front::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.08),transparent)}
+.flap{position:absolute;left:0;right:0;top:0;height:100px;transform-origin:top;z-index:4;transition:transform .7s ease,z-index 0s .35s;
+ background:var(--env);clip-path:polygon(0 0,100% 0,50% 100%);}
+.env.open .flap{transform:rotateX(180deg);z-index:1}
+.env.open .paper{transform:translateY(-110px)}
+.seal{position:absolute;left:50%;top:86px;transform:translate(-50%,-50%);z-index:6;border:0;background:none;font-size:56px;cursor:pointer;animation:beat 1.2s infinite;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));transition:opacity .3s}
+.env.open .seal{opacity:0;pointer-events:none}
+@keyframes beat{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.2)}}
+/* letter */
+#letter{display:none;opacity:0}
+#letter.show{display:block;animation:pop .9s forwards}
+@keyframes pop{from{opacity:0;transform:translateY(60px) scale(.7)}to{opacity:1;transform:none}}
+.card{background:var(--paper);color:var(--ink);border-radius:14px;padding:34px 24px 64px;min-height:340px;position:relative;box-shadow:0 24px 50px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card::before{content:"💌";position:absolute;top:10px;left:14px;font-size:22px}
+.page{display:none;font-size:21px;line-height:1.55;font-style:italic;width:100%}
+.page.active{display:block;animation:in .6s both}
+.page.out{display:block;animation:outt .35s both}
+@keyframes in{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:none}}
+@keyframes outt{to{opacity:0;transform:translateX(-50px)}}
+.next{position:absolute;right:16px;bottom:14px;background:var(--rose);color:#fff;border:0;border-radius:999px;padding:10px 20px;font:600 16px system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 14px rgba(255,77,121,.45)}
+.next:active{transform:scale(.95)}
+.dots{position:absolute;left:18px;bottom:24px;display:flex;gap:6px}
+.dots b{width:8px;height:8px;border-radius:50%;background:#e8c4cf}
+.dots b.on{background:var(--rose)}
+.choices{display:flex;gap:12px;margin-top:22px;justify-content:center}
+.choices button{flex:1;border:0;border-radius:12px;padding:14px;font:700 17px system-ui,sans-serif;cursor:pointer}
+.yes{background:var(--rose);color:#fff}
+.no{background:#eadde2;color:var(--ink)}
+.done{font-size:64px;display:block;margin-bottom:8px;animation:beat2 1s infinite}
+@keyframes beat2{50%{transform:scale(1.2)}}
+.saved{display:inline-block;margin-top:14px;font:600 14px system-ui,sans-serif;background:#e6f7ec;color:#145a32;padding:6px 12px;border-radius:999px}
+.admin{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));font:13px system-ui,sans-serif;background:rgba(0,0,0,.55);padding:8px 12px;border-radius:10px;display:none;max-width:70vw}
+.admin.on{display:block}
+.fl{position:absolute;z-index:7;font-size:34px;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));animation:sway 3s ease-in-out infinite}
+.f1{left:-14px;bottom:-16px}.f2{right:-12px;bottom:-14px;animation-delay:-1s}.f3{left:46%;bottom:-20px;font-size:28px;animation-delay:-2s}.f4{left:-10px;top:-12px;font-size:28px;animation-delay:-.5s}.f5{right:-10px;top:-12px;font-size:28px;animation-delay:-1.5s}
+@keyframes sway{50%{transform:rotate(10deg) scale(1.08)}}
+.env .back{border:2px solid #fff3;background:repeating-linear-gradient(45deg,var(--env2) 0 10px,#d97d94 10px 12px)}
+.env .front::before{content:"♥ ♥ ♥ ♥ ♥";position:absolute;left:0;right:0;bottom:12px;text-align:center;color:#fff9;letter-spacing:6px;font-size:14px;z-index:2}
+.garland{font-size:26px;letter-spacing:4px;margin-bottom:-14px;position:relative;z-index:5;text-shadow:0 3px 6px rgba(0,0,0,.4)}
+.card::after{content:"🌷🌸";position:absolute;top:8px;right:12px;font-size:22px}
+.page.long{font-size:18px}
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts"></div>
+
+<div class="scene">
+  <div id="intro">
+    <p class="hint">Ada surat buat kamu… tap hatinya 💗</p>
+    <div class="env" id="env">
+      <span class="fl f4">🌸</span><span class="fl f5">🌷</span>
+      <div class="back"></div>
+      <div class="paper"></div>
+      <div class="front"></div>
+      <div class="flap"></div>
+      <button class="seal" id="seal" aria-label="Buka amplop">❤️</button>
+      <span class="fl f1">🌹</span><span class="fl f2">🌺</span><span class="fl f3">🌸</span>
+    </div>
+  </div>
+
+  <div id="letter">
+    <div class="garland">🌸🌷🌹🌷🌸</div>
+    <div class="card" id="card">
+      <div class="page" id="p0">ehhh gw mau bilang sesuatu nih tapi gw gak pede asli 🙈</div>
+      <div class="page" id="p1">sebenarnya........</div>
+      <div class="page" id="p2">gw itu masih belum move on dari lu, lu mau gak......</div>
+      <div class="page long" id="p3">lu tau gak sih sebenernya gw itu masih punya perasaan ma lu tapi gw gengsian orang nya, lu itu di mata gw cuma satu satu nya tapi apalah daya aku 🥀</div>
+      <div class="page" id="p4">
+        balikan ma gw ??, gw tau lu gamon tapi gw juga jir malahan lebih lebih, jadi mau gak ???
+        <div class="choices">
+          <button class="yes" id="yes">Ya 💖</button>
+          <button class="no" id="no">Tidak</button>
+        </div>
+      </div>
+      <div class="page" id="p5" style="text-align:center"></div>
+      <div class="dots" id="dots"><b></b><b></b><b></b><b></b><b></b></div>
+      <button class="next" id="next">Next ➜</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin" id="admin"></div>
+
+<script>
+(function(){
+  // hati melayang
+  var h=document.getElementById('hearts'),em=['💗','💖','💕','🌹','🌸','🌷','🌺','❤️'];
+  for(var i=0;i<14;i++){var e=document.createElement('i');e.textContent=em[i%em.length];
+    e.style.left=(Math.random()*100)+'%';e.style.fontSize=(14+Math.random()*22)+'px';
+    e.style.animationDuration=(8+Math.random()*10)+'s';e.style.animationDelay=(-Math.random()*12)+'s';h.appendChild(e);}
+
+  var env=document.getElementById('env'),intro=document.getElementById('intro'),
+      letter=document.getElementById('letter'),next=document.getElementById('next'),
+      dots=document.querySelectorAll('#dots b'),cur=0,busy=false;
+
+  function show(n){
+    var old=document.getElementById('p'+cur),nw=document.getElementById('p'+n);
+    if(old&&old!==nw){old.classList.remove('active');old.classList.add('out');
+      setTimeout(function(){old.classList.remove('out');},350);}
+    setTimeout(function(){nw.classList.add('active');},old&&old!==nw?300:0);
+    cur=n;
+    dots.forEach(function(d,i){d.classList.toggle('on',i<=n);});
+    next.style.display=(n>=4)?'none':'';
+    if(n>=4)document.getElementById('dots').style.display=n===5?'none':'flex';
+  }
+
+  document.getElementById('seal').addEventListener('click',function(){
+    if(busy)return;busy=true;
+    env.classList.add('open');
+    setTimeout(function(){intro.classList.add('gone');},1900);
+    setTimeout(function(){intro.style.display='none';letter.classList.add('show');show(0);},2600);
+  });
+  next.addEventListener('click',function(){if(cur<4)show(cur+1);});
+
+  // ---- simpan jawaban ----
+  var store={db:null,user:null};
+  function fmt(t){try{return new Date(t).toLocaleString('id-ID');}catch(e){return t;}}
+  async function save(ans){
+    var rec={answer:ans,at:Date.now()};
+    var ok=false;
+    try{localStorage.setItem('jawaban',JSON.stringify(rec));ok=true;}catch(e){}
+    try{
+      var db=store.db||await claude.use('db');
+      if(db){await db.doc('jawaban/respon').set(rec);ok=true;}
+    }catch(e){}
+    return ok;
+  }
+  async function answer(a){
+    var ok=await save(a);
+    var p=document.getElementById('p5');
+    if(a==='ya'){
+      p.innerHTML='<span class="done">🥹💖</span>Yeayyy!! Makasih ya… gw seneng banget 😭<br><span class="saved">✓ Jawaban "YA" tersimpan</span>';
+      burst();
+    }else{
+      p.innerHTML='<span class="done">🥀</span>Oke, makasih udah jujur ya. Gw ngerti kok. 🤍<br><span class="saved">✓ Jawaban "TIDAK" tersimpan</span>';
+    }
+    var msg=a==='ya'?'Jawabanku: YA 💖 Gw mau balikan ma lu 🥺':'Jawabanku: TIDAK 🤍 Makasih udah jujur ya.';
+    p.innerHTML+='<br><a href="https://wa.me/628999055942?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:16px;background:#25D366;color:#fff;text-decoration:none;font:700 16px system-ui,sans-serif;padding:13px 20px;border-radius:12px">💬 Kirim jawabanku ke WhatsApp</a>';
+    show(5);
+  }
+  document.getElementById('yes').addEventListener('click',function(){answer('ya');});
+  document.getElementById('no').addEventListener('click',function(){answer('tidak');});
+
+  function burst(){
+    for(var i=0;i<30;i++){var e=document.createElement('i');e.textContent=em[i%em.length];
+      e.style.cssText='position:fixed;left:'+(Math.random()*100)+'%;bottom:-30px;font-size:'+(20+Math.random()*28)+'px;font-style:normal;z-index:9;pointer-events:none;animation:up '+(3+Math.random()*3)+'s ease-out forwards';
+      document.body.appendChild(e);}
+  }
+
+  // ---- panel pemilik: lihat jawaban ----
+  (async function(){
+    try{
+      if(typeof claude==='undefined')return;
+      var user=await claude.use('user'),db=await claude.use('db');
+      store.db=db;
+      if(!db||!user||!(user.isOwner()||user.canEdit()))return;
+      var box=document.getElementById('admin');box.classList.add('on');
+      box.textContent='📬 Belum ada jawaban';
+      db.doc('jawaban/respon').onSnapshot(function(s){
+        var d=s&&(s.data?s.data():s);
+        if(d&&d.answer)box.textContent='📬 Jawaban: '+d.answer.toUpperCase()+' • '+fmt(d.at);
+      });
+    }catch(e){}
+  })();
+})();
+</script>
+</body>
+</html>
